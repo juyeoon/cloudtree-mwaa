@@ -1,6 +1,6 @@
 {
     "SLACK_WEBHOOK_URL": "https://hooks.slack.com/services/your/slack/api",
-    "DISTRICTS": "[\"관악구\", \"동대문구\", \"마포구\", \"서초구\", \"성북구\", \"송파구\", \"용산구\", \"중구\", \"종로구\", \"금천구\", \"강남구\", \"동작구\"]",
+    "DISTRICTS": "[\"관악구\", \"동대문구\", \"마포구\", \"서초구\", \"성북구\", \"송파구\", \"용산구\", \"중구\", \"종로구\", \"강남구\", \"동작구\"]",
     "DATA_SEOUL_API_KEY": "INPUT_YOUR_KEY",
     "DATA4LIBRARY_API_KEY": "INPUT_YOUR_KEY"
 }
