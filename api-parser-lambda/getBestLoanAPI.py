@@ -18,9 +18,9 @@ def lambda_handler(event, context):
     authKey = event.get('key')
 
     # api 파라미터
-    # month_cnt: 직전 달로부터 n개월치
-    # dtl_gu_list: 자치구
-    month_cnt = 1  #  =========== setting value ===========
+    period_start = datetime.strptime(event.get('periodStart'), "%Y%m").date()
+    period_end = datetime.strptime(event.get('periodEnd'), "%Y%m").date()
+
     region = 11
     dtl_gu_list = event.get('districts')
     pageSize = 200
@@ -55,17 +55,19 @@ def lambda_handler(event, context):
         '중랑구': 11070,
     }
 
-    for i in range(1, month_cnt + 1):
-        current_first_day = datetime.now().date().replace(day=1)
-        startDt = current_first_day - relativedelta(months=i)
-        endDt = startDt + relativedelta(months=1) - timedelta(days=1)
+    current_start_date = period_start
+    while current_start_date <= period_end:
+        endDt = current_start_date + relativedelta(months=1) - timedelta(days=1)
+
+        print(current_start_date)
+        print(endDt)
 
         for dtl_gu in dtl_gu_list:
             dtl_region = districts_dict[dtl_gu]
 
             params = {
                 'authKey': authKey,
-                'startDt': startDt.strftime('%Y-%m-%d'),
+                'startDt': current_start_date.strftime('%Y-%m-%d'),
                 'endDt': endDt.strftime('%Y-%m-%d'),
                 'region': region,
                 'dtl_region': dtl_region,
@@ -85,8 +87,8 @@ def lambda_handler(event, context):
                 print(f"api 호출 실패: {response.status_code}")
                 exit()
 
-            year = startDt.year
-            month = startDt.month
+            year = current_start_date.year
+            month = current_start_date.month
 
             df = transform_dataframe(df, dtl_gu, year, month)
 
@@ -94,6 +96,8 @@ def lambda_handler(event, context):
             file_path = f'{main_prefix}/district={dtl_gu}/year={year}/month={month}/{file_name}'  #  =========== custom value ===========
 
             save_to_csv(df, bucket_name, f'{file_path}.csv')
+
+        current_start_date += relativedelta(months=1)
 
     print("------------전체 api 파싱 끝------------")
 
