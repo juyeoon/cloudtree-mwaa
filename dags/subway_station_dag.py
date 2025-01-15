@@ -194,7 +194,7 @@ with DAG(
 
     # =========== data 5 : 지하철 ===========
 
-    raw_subway_station_loc_table = "bus_stop_loc_raw"
+    raw_subway_station_loc_table = "subway_station_loc_raw"
     raw_subway_station_loc_database_name = "cloudtree_raw_db"
     raw_subway_station_loc_sql_file_name = f"create_table_{raw_subway_station_loc_table}"
     raw_subway_station_loc_fetch_s3_task_id = f"fetch_sql_{raw_subway_station_loc_sql_file_name}"
@@ -205,7 +205,7 @@ with DAG(
         raw_subway_station_loc_fetch_s3_task_id, raw_subway_station_loc_database_name
     )
 
-    trans_subway_station_loc_table = "bus_stop_loc"
+    trans_subway_station_loc_table = "subway_station_loc"
     trans_subway_station_loc_database_name = "cloudtree_transformed_db"
     trans_subway_station_loc_sql_file_name = f"create_table_{trans_subway_station_loc_table}"
     trans_subway_station_loc_fetch_s3_task_id = f"fetch_sql_{trans_subway_station_loc_sql_file_name}"
