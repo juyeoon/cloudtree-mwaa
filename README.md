@@ -8,6 +8,11 @@ cloudtree 프로젝트 - Amazon Managed Workflows for Apache Airflow (MWAA) Sour
 
 ![s3-raw-bucket](https://github.com/user-attachments/assets/9b23b4c0-9cc4-4987-8867-4bb91af486a2)
 
+![glue-job](https://github.com/user-attachments/assets/f3682336-4184-4f8c-9fbf-25fa9de33575)
+
+
+
+
 - data1 : 인기대출도서
 
     - 매월 1일 (1개월 주기)
