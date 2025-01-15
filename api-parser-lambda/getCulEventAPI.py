@@ -59,10 +59,6 @@ def lambda_handler(event, context):
 
     df = transform_dataframe(df)
 
-    file_name = f'{service}_all_{request_date}'  #  =========== custom value ===========
-    file_path = f'{main_prefix}/request_date={request_date}/district=all/{file_name}'  # === custom value ===
-    save_to_csv(df, bucket_name, f'{file_path}.csv')
-
     for district in districts:
         gu_df = df[df["GUNAME"].str.contains(district)]
         file_name = f'{service}_{district}_{request_date}'  #  =========== custom value ===========
