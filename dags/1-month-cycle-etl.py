@@ -208,7 +208,7 @@ def run_glue_job(job_name, retry=3, retry_delay=30):
 # ==================================================================== DAG ====================================================================
 
 with DAG(
-    dag_id="a-one-month-cycle-ETL-to-L2",
+    dag_id="a-one-month-cycle-ETL-to-L1",
     start_date=days_ago(1),
     # schedule_interval='10 15 1 * *', # 매달 1일 오전 12시 10분
     schedule_interval=None,
@@ -285,7 +285,7 @@ with DAG(
 
     # ============================ bll: load to L2 ============================
 
-    with TaskGroup(group_id='etl_bbl') as etl_bbl:
+    with TaskGroup(group_id='etl_bll') as etl_bll:
         invoke_api_lambda = invoke_lambda(bll_dict['api_lambda_nm'], bll_dict['lambda_payload'])
         msck_raw = update_data_catalog(bll_dict['raw_db_nm'], bll_dict['raw_table_nm'])
         run_trans_job = run_glue_job(bll_dict['trans_job_nm'])
@@ -343,6 +343,6 @@ with DAG(
     )
 
     # task group 의존성 설정
-    start_task >> (create_bll_raw_table, create_bll_trans_table) >> etl_bbl
+    start_task >> (create_bll_raw_table, create_bll_trans_table) >> etl_bll
     start_task >> (create_cul_raw_parse_table, create_cul_raw_info_table, create_cul_trans_table) >> etl_cul
-    [etl_bbl, etl_cul] >> end_task
+    [etl_bll, etl_cul] >> end_task
