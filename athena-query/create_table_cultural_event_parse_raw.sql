@@ -22,6 +22,10 @@ CREATE EXTERNAL TABLE IF NOT EXISTS cloudtree_raw_db.cultural_event_parse_raw (
     IS_FREE STRING,
     HMPG_ADDR STRING
 )
+PARTITIONED BY (
+    request_date STRING,
+    district STRING
+)
 ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
 WITH SERDEPROPERTIES (
     "separatorChar" = ",",
