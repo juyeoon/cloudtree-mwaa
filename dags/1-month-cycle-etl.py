@@ -154,6 +154,8 @@ def create_table(fetch_s3_task_id, database_name):
         query=f"{{{{ ti.xcom_pull(task_ids='{fetch_s3_task_id}') }}}}",  # XCom에서 쿼리 내용 가져오기
         database=database_name,
         output_location="s3://cloudtree-athena-query-result/mwaa-dag-query-results/",
+        on_failure_callback=send_slack_message_fail,
+        on_success_callback=send_slack_message_success,
     )
 
 
