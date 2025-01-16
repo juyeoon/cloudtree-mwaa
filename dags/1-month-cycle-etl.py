@@ -208,7 +208,7 @@ def run_glue_job(job_name, retry=3, retry_delay=30):
 # ==================================================================== DAG ====================================================================
 
 with DAG(
-    dag_id="a-one-month-cycle-ETL-to-L1",
+    dag_id="one-month-cycle-ETL-to-L1",
     start_date=days_ago(1),
     # schedule_interval='10 15 1 * *', # 매달 1일 오전 12시 10분
     schedule_interval=None,
