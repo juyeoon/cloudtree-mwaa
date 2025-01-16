@@ -9,6 +9,7 @@ from airflow.providers.amazon.aws.operators.lambda_function import (
 from airflow.providers.amazon.aws.operators.glue import GlueJobOperator
 from airflow.providers.amazon.aws.operators.athena import AthenaOperator
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 from airflow.utils.dates import days_ago
 from airflow.models import Variable
 from dateutil.relativedelta import relativedelta
@@ -131,6 +132,13 @@ def create_table(fetch_s3_task_id, database_name):
     )
 
 
+def copy_last_month_data(eng, district, year, month):
+    return BashOperator(
+        task_id=f'copy_data_{eng}_{year}_{month}',
+        bash_command=f'aws s3 cp s3://cloudtree-best-loan-raw/raw_best_loan/district={district}/year={year}/month={month}/ s3://cloudtree-best-loan-raw/test/district={district}/year={year}/month={month}/ --recursive',
+    )
+
+
 def invoke_lambda(func_name, payload=None, retry=5, retry_delay=1):
     """
     AWS Lambda 호출
@@ -181,7 +189,7 @@ def run_glue_job(job_name, retry=3, retry_delay=30):
 
 # DAG 정의
 with DAG(
-    dag_id="best-loan-dag",
+    dag_id="9-month-best-loan-dag",
     start_date=days_ago(1),
     # schedule_interval='10 0 1 * *',
     schedule_interval=None,
@@ -191,10 +199,28 @@ with DAG(
     districts = json.loads(Variable.get("DISTRICTS"))
     seoul_key = Variable.get("DATA_SEOUL_API_KEY")
     library_key = Variable.get("DATA4LIBRARY_API_KEY")
+    districts_english = json.loads(Variable.get("DISTRICTS_ENGLISH"))
 
     # =========== data 1 : 인기대출도서 ===========
 
-    raw_best_loan_list_table = "bus_stop_loc_raw"
+    # last_month_date = datetime.now().date() - relativedelta(months=1)
+    # last_month = (datetime.now().date() - relativedelta(months=1)).strftime("%Y%m")
+
+    parallel_tasks = []
+    for district_kor, district_eng in districts_english.items():
+        copy_task = copy_last_month_data(district_eng, district_kor, 2024, 9)
+        parallel_tasks.append(copy_task)
+
+    # for district_kor, district_eng in districts_english.items():
+    #     copy_task = copy_last_month_data(district_eng, district_kor, last_month_date.year, last_month_date.month)
+    #     parallel_tasks.append(copy_task)
+
+    final_task = BashOperator(
+        task_id='final_task',
+        bash_command='echo "All parallel tasks completed!"',
+    )
+
+    raw_best_loan_list_table = "best_loan_list_raw"
     raw_best_loan_list_database_name = "cloudtree_raw_db"
     raw_best_loan_list_sql_file_name = f"create_table_{raw_best_loan_list_table}"
     raw_best_loan_list_fetch_s3_task_id = f"fetch_sql_{raw_best_loan_list_sql_file_name}"
@@ -205,7 +231,7 @@ with DAG(
         raw_best_loan_list_fetch_s3_task_id, raw_best_loan_list_database_name
     )
 
-    trans_best_loan_list_table = "bus_stop_loc"
+    trans_best_loan_list_table = "best_loan_list"
     trans_best_loan_list_database_name = "cloudtree_transformed_db"
     trans_best_loan_list_sql_file_name = f"create_table_{trans_best_loan_list_table}"
     trans_best_loan_list_fetch_s3_task_id = f"fetch_sql_{trans_best_loan_list_sql_file_name}"
@@ -216,24 +242,24 @@ with DAG(
         trans_best_loan_list_fetch_s3_task_id, trans_best_loan_list_database_name
     )
 
-    last_month = (datetime.now().date() - relativedelta(months=1)).strftime("%Y%m")
-
-    invoke_best_loan_API = invoke_lambda(
-        "getBestLoanAPI",
-        {"districts": districts, "key": library_key, "periodStart": last_month, "periodEnd": last_month},
-    )
+    # # invoke_best_loan_API = invoke_lambda(
+    # #     "getBestLoanAPI",
+    # #     {"districts": districts, "key": library_key, "periodStart": last_month, "periodEnd": last_month},
+    # # )
     msck_best_loan_raw = update_data_catalog("cloudtree_raw_db", "best_loan_list_raw")  #
     run_glue_best_loan = run_glue_job("best_loan_list_job")  #
     msck_best_loan_trans = update_data_catalog("cloudtree_transformed_db", "best_loan_list")  #
 
-    # task 의존성 설정
+    # # task 의존성 설정
 
     (
         raw_best_loan_list_table_ddl
         >> raw_best_loan_list_create_table_by_ddl
         >> trans_best_loan_list_table_ddl
         >> trans_best_loan_list_create_table_by_ddl
-        >> invoke_best_loan_API
+        >> parallel_tasks
+        >> final_task
+        # >> invoke_best_loan_API
         >> msck_best_loan_raw
         >> run_glue_best_loan
         >> msck_best_loan_trans
