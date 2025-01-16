@@ -19,7 +19,7 @@ from dateutil.relativedelta import relativedelta
 from datetime import datetime, timedelta
 
 """
-taskgroup, task, dag 의존성 test code1
+taskgroup, task, dag 의존성 test code 1
 """
 
 
@@ -160,8 +160,18 @@ with DAG(
     (group4, group7, group5) >> group6
     [group3, group6] >> task10 >> trigger_dag2
     """ DAG graph
-    group1    group2           group4    group5
-       \      /                   \      /
+    group1    group2          group4    group7    group5
+       \      /                   \      |      /
         group3                     group6
-
+               \                  /
+                \                /
+                 \              /
+                  \            /
+                   \          /
+                    \        /
+                     task10
+                       |
+                       v
+                 trigger_dag2
+    
     """
