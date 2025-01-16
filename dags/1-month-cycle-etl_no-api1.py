@@ -274,23 +274,23 @@ with DAG(
 
     # ============================ bll: create table ============================
 
-    with TaskGroup(group_id='create_bll_raw_table') as create_bll_raw_table:
-        ct_sql_file_nm = f"create_table_{bll_dict['raw_table_nm']}"
-        fetch_s3_task_id = f"fetch_sql_{ct_sql_file_nm}"
-        fetch_s3_task = fetch_query_s3(fetch_s3_task_id, ct_sql_file_nm)
-        create_table_task = create_table(fetch_s3_task_id, bll_dict['raw_db_nm'])
-        # TaskGroup 의존성 설정
-        fetch_s3_task >> create_table_task
+    # with TaskGroup(group_id='create_bll_raw_table') as create_bll_raw_table:
+    #     ct_sql_file_nm = f"create_table_{bll_dict['raw_table_nm']}"
+    #     fetch_s3_task_id = f"fetch_sql_{ct_sql_file_nm}"
+    #     fetch_s3_task = fetch_query_s3(fetch_s3_task_id, ct_sql_file_nm)
+    #     create_table_task = create_table(fetch_s3_task_id, bll_dict['raw_db_nm'])
+    #     # TaskGroup 의존성 설정
+    #     fetch_s3_task >> create_table_task
 
-    with TaskGroup(group_id='create_bll_trans_table') as create_bll_trans_table:
-        ct_sql_file_nm = f"create_table_{bll_dict['trans_table_nm']}"
-        fetch_s3_task_id = f"fetch_sql_{ct_sql_file_nm}"
-        fetch_s3_task = fetch_query_s3(fetch_s3_task_id, ct_sql_file_nm)
-        create_table_task = create_table(fetch_s3_task_id, bll_dict['trans_db_nm'])
-        # TaskGroup 의존성 설정
-        fetch_s3_task >> create_table_task
+    # with TaskGroup(group_id='create_bll_trans_table') as create_bll_trans_table:
+    #     ct_sql_file_nm = f"create_table_{bll_dict['trans_table_nm']}"
+    #     fetch_s3_task_id = f"fetch_sql_{ct_sql_file_nm}"
+    #     fetch_s3_task = fetch_query_s3(fetch_s3_task_id, ct_sql_file_nm)
+    #     create_table_task = create_table(fetch_s3_task_id, bll_dict['trans_db_nm'])
+    #     # TaskGroup 의존성 설정
+    #     fetch_s3_task >> create_table_task
 
-    # ============================ bll: load to L2 ============================
+    # ============================ bll: load to L1 ============================
 
     with TaskGroup(group_id='etl_bll') as etl_bll:
         parallel_tasks = []
@@ -305,31 +305,31 @@ with DAG(
 
     # ============================ cul: create table ============================
 
-    with TaskGroup(group_id='create_cul_raw_parse_table') as create_cul_raw_parse_table:
-        ct_sql_file_nm = f"create_table_{cul_dict['raw_parse_table_nm']}"
-        fetch_s3_task_id = f"fetch_sql_{ct_sql_file_nm}"
-        fetch_s3_task = fetch_query_s3(fetch_s3_task_id, ct_sql_file_nm)
-        create_table_task = create_table(fetch_s3_task_id, cul_dict['raw_db_nm'])
-        # TaskGroup 의존성 설정
-        fetch_s3_task >> create_table_task
+    # with TaskGroup(group_id='create_cul_raw_parse_table') as create_cul_raw_parse_table:
+    #     ct_sql_file_nm = f"create_table_{cul_dict['raw_parse_table_nm']}"
+    #     fetch_s3_task_id = f"fetch_sql_{ct_sql_file_nm}"
+    #     fetch_s3_task = fetch_query_s3(fetch_s3_task_id, ct_sql_file_nm)
+    #     create_table_task = create_table(fetch_s3_task_id, cul_dict['raw_db_nm'])
+    #     # TaskGroup 의존성 설정
+    #     fetch_s3_task >> create_table_task
 
-    with TaskGroup(group_id='create_cul_raw_info_table') as create_cul_raw_info_table:
-        ct_sql_file_nm = f"create_table_{cul_dict['raw_info_table_nm']}"
-        fetch_s3_task_id = f"fetch_sql_{ct_sql_file_nm}"
-        fetch_s3_task = fetch_query_s3(fetch_s3_task_id, ct_sql_file_nm)
-        create_table_task = create_table(fetch_s3_task_id, cul_dict['raw_db_nm'])
-        # TaskGroup 의존성 설정
-        fetch_s3_task >> create_table_task
+    # with TaskGroup(group_id='create_cul_raw_info_table') as create_cul_raw_info_table:
+    #     ct_sql_file_nm = f"create_table_{cul_dict['raw_info_table_nm']}"
+    #     fetch_s3_task_id = f"fetch_sql_{ct_sql_file_nm}"
+    #     fetch_s3_task = fetch_query_s3(fetch_s3_task_id, ct_sql_file_nm)
+    #     create_table_task = create_table(fetch_s3_task_id, cul_dict['raw_db_nm'])
+    #     # TaskGroup 의존성 설정
+    #     fetch_s3_task >> create_table_task
 
-    with TaskGroup(group_id='create_cul_trans_table') as create_cul_trans_table:
-        ct_sql_file_nm = f"create_table_{cul_dict['trans_table_nm']}"
-        fetch_s3_task_id = f"fetch_sql_{ct_sql_file_nm}"
-        fetch_s3_task = fetch_query_s3(fetch_s3_task_id, ct_sql_file_nm)
-        create_table_task = create_table(fetch_s3_task_id, cul_dict['trans_db_nm'])
-        # TaskGroup 의존성 설정
-        fetch_s3_task >> create_table_task
+    # with TaskGroup(group_id='create_cul_trans_table') as create_cul_trans_table:
+    #     ct_sql_file_nm = f"create_table_{cul_dict['trans_table_nm']}"
+    #     fetch_s3_task_id = f"fetch_sql_{ct_sql_file_nm}"
+    #     fetch_s3_task = fetch_query_s3(fetch_s3_task_id, ct_sql_file_nm)
+    #     create_table_task = create_table(fetch_s3_task_id, cul_dict['trans_db_nm'])
+    #     # TaskGroup 의존성 설정
+    #     fetch_s3_task >> create_table_task
 
-    # ============================ cul: load to L2 ============================
+    # ============================ cul: load to L1 ============================
 
     with TaskGroup(group_id='etl_cul') as etl_cul:
         invoke_api_lambda = invoke_lambda(cul_dict['api_lambda_nm'], cul_dict['lambda_payload'])
@@ -353,6 +353,6 @@ with DAG(
     )
 
     # task group 의존성 설정
-    start_task >> (create_bll_raw_table, create_bll_trans_table) >> etl_bll
-    start_task >> (create_cul_raw_parse_table, create_cul_raw_info_table, create_cul_trans_table) >> etl_cul
-    [etl_bll, etl_cul] >> end_task
+    # start_task >> (create_bll_raw_table, create_bll_trans_table) >> etl_bll
+    # start_task >> (create_cul_raw_parse_table, create_cul_raw_info_table, create_cul_trans_table) >> etl_cul
+    start_task >> [etl_bll, etl_cul] >> end_task
