@@ -283,7 +283,7 @@ with DAG(
         # TaskGroup 의존성 설정
         fetch_s3_task >> create_table_task
 
-    # ============================ bll: load to L2 ============================
+    # ============================ bll: load to L1 ============================
 
     with TaskGroup(group_id='etl_bll') as etl_bll:
         invoke_api_lambda = invoke_lambda(bll_dict['api_lambda_nm'], bll_dict['lambda_payload'])
@@ -319,7 +319,7 @@ with DAG(
         # TaskGroup 의존성 설정
         fetch_s3_task >> create_table_task
 
-    # ============================ cul: load to L2 ============================
+    # ============================ cul: load to L1 ============================
 
     with TaskGroup(group_id='etl_cul') as etl_cul:
         invoke_api_lambda = invoke_lambda(cul_dict['api_lambda_nm'], cul_dict['lambda_payload'])
