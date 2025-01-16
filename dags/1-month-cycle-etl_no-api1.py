@@ -125,7 +125,7 @@ def send_start_end_message(type, **context):
 def copy_last_month_data(eng, district, year, month):
     return BashOperator(
         task_id=f'copy_data_{eng}_{year}_{month}',
-        bash_command=f'aws s3 cp s3://cloudtree-best-loan-raw/raw_best_loan/district={district}/year={year}/month={month}/ s3://cloudtree-best-loan-raw/test/district={district}/year={year}/month={month}/ --recursive',
+        bash_command=f'aws s3 cp s3://cloudtree-best-loan-raw/raw_best_loan/district={district}/year={year}/month={month}/ s3://cloudtree-raw-data/best-loan-list/district={district}/year={year}/month={month}/ --recursive',
     )
 
 
@@ -161,6 +161,8 @@ def create_table(fetch_s3_task_id, database_name):
         query=f"{{{{ ti.xcom_pull(task_ids='{fetch_s3_task_id}') }}}}",  # XCom에서 쿼리 내용 가져오기
         database=database_name,
         output_location="s3://cloudtree-athena-query-result/mwaa-dag-query-results/",
+        on_failure_callback=send_slack_message_fail,
+        on_success_callback=send_slack_message_success,
     )
 
 
