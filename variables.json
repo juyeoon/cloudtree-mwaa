@@ -1,10 +1,10 @@
 {
-    "SLACK_WEBHOOK_URL": "https://hooks.slack.com/services/your/slack/api",
-    "DISTRICTS": "[\"강남구\", \"관악구\", \"동대문구\", \"동작구\", \"마포구\", \"서초구\", \"성북구\", \"송파구\", \"용산구\", \"종로구\", \"중구\"]",
-    "DATA_SEOUL_API_KEY": "INPUT_YOUR_KEY",
-    "DATA4LIBRARY_API_KEY": "INPUT_YOUR_KEY",
-    "DISTRICTS_ENGLISH": "{\"강남구\": \"Gangnam-gu\", \"관악구\": \"Gwanak-gu\", \"동대문구\": \"Dongdaemun-gu\", \"동작구\": \"Dongjak-gu\", \"마포구\": \"Mapo-gu\", \"서초구\": \"Seocho-gu\", \"성북구\": \"Seongbuk-gu\", \"송파구\": \"Songpa-gu\", \"용산구\": \"Yongsan-gu\", \"종로구\": \"Jongno-gu\", \"중구\": \"Jung-gu\"}",
-    "DISTRICTS_KOR_ENG": "{\"강남구\": \"Gangnam-gu\", \"관악구\": \"Gwanak-gu\", \"동대문구\": \"Dongdaemun-gu\", \"동작구\": \"Dongjak-gu\", \"마포구\": \"Mapo-gu\", \"서초구\": \"Seocho-gu\", \"성북구\": \"Seongbuk-gu\", \"송파구\": \"Songpa-gu\", \"용산구\": \"Yongsan-gu\", \"종로구\": \"Jongno-gu\", \"중구\": \"Jung-gu\"}"
+    "SLACK_WEBHOOK_URL": "https://hooks.slack.com/services/your/slack/api"
+    , "DATA_SEOUL_API_KEY": "INPUT_YOUR_KEY"
+    , "DATA4LIBRARY_API_KEY": "INPUT_YOUR_KEY"
+    , "DISTRICTS_KOR_ENG": "{\"강남구\": \"Gangnam-gu\", \"관악구\": \"Gwanak-gu\", \"동대문구\": \"Dongdaemun-gu\", \"동작구\": \"Dongjak-gu\", \"마포구\": \"Mapo-gu\", \"서초구\": \"Seocho-gu\", \"성북구\": \"Seongbuk-gu\", \"송파구\": \"Songpa-gu\", \"용산구\": \"Yongsan-gu\", \"종로구\": \"Jongno-gu\", \"중구\": \"Jung-gu\"}"
+    , "TEST_DELETE_START_DATE": "202412"
+    , "TEST_DELETE_END_DATE":"202412"
 }
   
   
