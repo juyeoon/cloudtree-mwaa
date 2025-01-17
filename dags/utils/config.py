@@ -15,9 +15,19 @@ ATHENA_QUERY_PREFIX = "athena-query"
 ATHENA_QUERY_OUTPUT_BUCKET = "cloudtree-athena-query-result"
 ATHENA_QUERY_OUTPUT_PREFIX = "mwaa-dag-query-results"
 
+RAW_DB = 'cloudtree_raw_db'
+TRANS_DB = 'cloudtree_transformed_db'
+AGG_DB = 'cloudtree_aggregated_db'
+
+AGG_TABLE = ['library_culture_analysis']
+
 """
 bll: 인기대출도서
 cul: 서울문화행사
+lib: 도서관 정보
+bus: 버스정류장
+sta: 지하철역
+park: 도시공원
 """
 
 BLL_DICT = {
