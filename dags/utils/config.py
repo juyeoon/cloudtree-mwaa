@@ -15,6 +15,11 @@ ATHENA_QUERY_PREFIX = "athena-query"
 ATHENA_QUERY_OUTPUT_BUCKET = "cloudtree-athena-query-result"
 ATHENA_QUERY_OUTPUT_PREFIX = "mwaa-dag-query-results"
 
+REDSHIFT_QUERY_BUCKET = "cloudtree-mwaa-query"
+REDSHIFT_QUERY_PREFIX = "redshift-query"
+
+REDSHIFT_CONN_ID = "cloudtree_redshift"
+
 RAW_DB = 'cloudtree_raw_db'
 TRANS_DB = 'cloudtree_transformed_db'
 AGG_DB = 'cloudtree_aggregated_db'
