@@ -23,11 +23,13 @@ with DAG(
     cul_dict = cfg.CUL_DICT
 
     with TaskGroup(group_id="etl_bll") as etl_bll:
+        bll_data_year = cfg.LAST_MONTH_DATE.year
+        bll_data_month = cfg.LAST_MONTH_DATE.month
         copy_last_month_data = []
-        year = cfg.LAST_MONTH_DATE.year
-        month = cfg.LAST_MONTH_DATE.month
         for district_kor, district_eng in cfg.DISTRICTS_KOR_ENG.items():
-            copy_task = copy_last_month_data(district_eng, district_kor, year, month)
+            copy_task = s3h.task_copy_bll_raw_data(
+                district_eng, district_kor, bll_data_year, bll_data_month
+            )
             copy_last_month_data.append(copy_task)
         msck_raw = ath.task_msck_repair_table(
             bll_dict["raw_db_nm"], bll_dict["raw_table_nm"]
