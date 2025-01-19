@@ -1,4 +1,5 @@
 import json
+import boto3
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from airflow.models import Variable
@@ -15,16 +16,25 @@ ATHENA_QUERY_PREFIX = "athena-query"
 ATHENA_QUERY_OUTPUT_BUCKET = "cloudtree-athena-query-result"
 ATHENA_QUERY_OUTPUT_PREFIX = "mwaa-dag-query-results"
 
+RAW_DB = "cloudtree_raw_db"
+TRANS_DB = "cloudtree_transformed_db"
+AGG_DB = "cloudtree_aggregated_db"
+
+AGG_BUCKET_PREFIX = "cloudtree-aggregated-data"
+
+AGG_TABLE = ["library_culture_analysis"]
+
 REDSHIFT_QUERY_BUCKET = "cloudtree-mwaa-query"
 REDSHIFT_QUERY_PREFIX = "redshift-query"
 
 REDSHIFT_CONN_ID = "cloudtree_redshift"
+REDSHIFT_DB = "cloudtree"
 
-RAW_DB = 'cloudtree_raw_db'
-TRANS_DB = 'cloudtree_transformed_db'
-AGG_DB = 'cloudtree_aggregated_db'
+REDSHIFT_COPY_ROLE_NAME = "bsh-redshift-k12"
 
-AGG_TABLE = ['library_culture_analysis']
+sts_client = boto3.client("sts")
+identity_info = sts_client.get_caller_identity()
+ACCOUNT_ID = identity_info["Account"]
 
 """
 bll: 인기대출도서
@@ -36,13 +46,13 @@ park: 도시공원
 """
 
 BLL_DICT = {
-    'raw_db_nm': 'cloudtree_raw_db',
-    'trans_db_nm': 'cloudtree_transformed_db',
-    'raw_table_nm': 'best_loan_list_raw',
-    'trans_table_nm': 'best_loan_list',
-    'trans_job_nm': 'best_loan_list_job',
-    'api_lambda_nm': 'getBestLoanAPI',
-    'lambda_payload': {
+    "raw_db_nm": RAW_DB,
+    "trans_db_nm": TRANS_DB,
+    "raw_table_nm": "best_loan_list_raw",
+    "trans_table_nm": "best_loan_list",
+    "trans_job_nm": "best_loan_list_job",
+    "api_lambda_nm": "getBestLoanAPI",
+    "lambda_payload": {
         "districts": list(DISTRICTS_KOR_ENG.keys()),
         "key": LIBRARY_KEY,
         "periodStart": LAST_MONTH,
@@ -51,54 +61,54 @@ BLL_DICT = {
 }
 
 CUL_DICT = {
-    'raw_db_nm': 'cloudtree_raw_db',
-    'trans_db_nm': 'cloudtree_transformed_db',
-    'raw_parse_table_nm': 'cultural_event_parse_raw',
-    'raw_info_table_nm': 'cultural_event_info_raw',
-    'trans_table_nm': 'cultural_event_info',
-    'keyword_job_nm': 'cultural_event_keyword_job',
-    'trans_job_nm': 'best_loan_list_job',
-    'api_lambda_nm': 'getCulEventAPI',
-    'lambda_payload': {
+    "raw_db_nm": RAW_DB,
+    "trans_db_nm": TRANS_DB,
+    "raw_parse_table_nm": "cultural_event_parse_raw",
+    "raw_info_table_nm": "cultural_event_info_raw",
+    "trans_table_nm": "cultural_event_info",
+    "keyword_job_nm": "cultural_event_keyword_job",
+    "trans_job_nm": "best_loan_list_job",
+    "api_lambda_nm": "getCulEventAPI",
+    "lambda_payload": {
         "districts": list(DISTRICTS_KOR_ENG.keys()),
         "key": SEOUL_KEY,
     },
 }
 
 LIB_DICT = {
-    'raw_db_nm': 'cloudtree_raw_db',
-    'trans_db_nm': 'cloudtree_transformed_db',
-    'raw_table_nm': 'library_data_raw',
-    'trans_table_nm': 'library_data',
-    'trans_job_nm': 'library_data_job',
-    'api_lambda_nm': 'getLibDataAPI',
-    'lambda_payload': {"districts": list(DISTRICTS_KOR_ENG.keys()), "key": LIBRARY_KEY},
+    "raw_db_nm": RAW_DB,
+    "trans_db_nm": TRANS_DB,
+    "raw_table_nm": "library_data_raw",
+    "trans_table_nm": "library_data",
+    "trans_job_nm": "library_data_job",
+    "api_lambda_nm": "getLibDataAPI",
+    "lambda_payload": {"districts": list(DISTRICTS_KOR_ENG.keys()), "key": LIBRARY_KEY},
 }
 
 BUS_DICT = {
-    'raw_db_nm': 'cloudtree_raw_db',
-    'trans_db_nm': 'cloudtree_transformed_db',
-    'raw_table_nm': 'bus_stop_loc_raw',
-    'trans_table_nm': 'bus_stop_loc',
-    'trans_job_nm': 'bus_stop_loc_job',
-    'api_lambda_nm': 'getBusStopLocAPI',
-    'lambda_payload': {"key": SEOUL_KEY},
+    "raw_db_nm": RAW_DB,
+    "trans_db_nm": TRANS_DB,
+    "raw_table_nm": "bus_stop_loc_raw",
+    "trans_table_nm": "bus_stop_loc",
+    "trans_job_nm": "bus_stop_loc_job",
+    "api_lambda_nm": "getBusStopLocAPI",
+    "lambda_payload": {"key": SEOUL_KEY},
 }
 
 STA_DICT = {
-    'raw_db_nm': 'cloudtree_raw_db',
-    'trans_db_nm': 'cloudtree_transformed_db',
-    'raw_table_nm': 'subway_station_loc_raw',
-    'trans_table_nm': 'subway_station_loc',
-    'trans_job_nm': 'subway_station_loc_job',
-    'api_lambda_nm': 'getSubwayStationLocAPI',
-    'lambda_payload': {"key": SEOUL_KEY},
+    "raw_db_nm": RAW_DB,
+    "trans_db_nm": TRANS_DB,
+    "raw_table_nm": "subway_station_loc_raw",
+    "trans_table_nm": "subway_station_loc",
+    "trans_job_nm": "subway_station_loc_job",
+    "api_lambda_nm": "getSubwayStationLocAPI",
+    "lambda_payload": {"key": SEOUL_KEY},
 }
 
 PARK_DICT = {
-    'raw_db_nm': 'cloudtree_raw_db',
-    'trans_db_nm': 'cloudtree_transformed_db',
-    'raw_table_nm': 'city_park_info_raw',
-    'trans_table_nm': 'city_park_info',
-    'trans_job_nm': 'city_park_info_job',
+    "raw_db_nm": RAW_DB,
+    "trans_db_nm": TRANS_DB,
+    "raw_table_nm": "city_park_info_raw",
+    "trans_table_nm": "city_park_info",
+    "trans_job_nm": "city_park_info_job",
 }
