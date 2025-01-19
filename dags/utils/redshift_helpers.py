@@ -5,7 +5,7 @@ from airflow.operators.python import PythonOperator
 from utils import config as cfg
 
 
-def red_helper_test():
+def task_red_helper_test():
     return PythonOperator(
         task_id=f"red_helper_test",
         python_callable=update_advanced_analysis_table,
@@ -106,7 +106,7 @@ def update_cloudtree_agg_table(red_table_name, agg_table_name):
     # copy
     copy_query = f"""
     COPY {red_table_name}
-    FROM 's3://{cfg.AGG_BUCKET_PREFIX}/{agg_table_name}/'
+    FROM 's3://{cfg.AGG_BUCKET}/{agg_table_name}/'
     IAM_ROLE 'arn:aws:iam::{cfg.ACCOUNT_ID}:role/{cfg.REDSHIFT_COPY_ROLE_NAME}'
     FORMAT AS PARQUET;
     """
