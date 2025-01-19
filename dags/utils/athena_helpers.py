@@ -1,14 +1,14 @@
 import boto3
+from datetime import timedelta
 from airflow.providers.amazon.aws.operators.athena import AthenaOperator
 from airflow.operators.python import PythonOperator
-from datetime import timedelta
-from utils.slack_helpers import send_slack_message_fail, send_slack_message_success
+from utils import slack_helpers as sh
 from utils import config as cfg
 
 
 def execute_athena_query(database_name, file_name):
     """
-    S3에서 SQL 파일을 읽고 Athena로 실행
+    S3에서 SQL 파일을 읽고 Athena로 실행하는 함수
     """
     # S3
     query_key = f"{cfg.ATHENA_QUERY_PREFIX}/{file_name}.sql"
@@ -26,28 +26,28 @@ def execute_athena_query(database_name, file_name):
     )
 
 
-def create_table(database_name, table_name, retry=3, retry_delay=10):
+def task_create_table(database_name, table_name, retry=3, retry_delay=10):
     """
-    table 생성
+    task: table 생성 (s3 query)
     """
     return PythonOperator(
         task_id=f"create_table_{database_name}_{table_name}",
         python_callable=execute_athena_query,
         op_kwargs={
-            "file_name": f'create_table_{table_name}',
             "database_name": database_name,
+            "file_name": f"create_table_{table_name}",
         },
         retries=retry,
         retry_delay=timedelta(seconds=retry_delay),
-        on_retry_callback=send_slack_message_fail,
-        on_failure_callback=send_slack_message_fail,
-        on_success_callback=send_slack_message_success,
+        on_retry_callback=sh.send_slack_message_fail,
+        on_failure_callback=sh.send_slack_message_fail,
+        on_success_callback=sh.send_slack_message_success,
     )
 
 
-def drop_table(database_name, table_name, retry=3, retry_delay=10):
+def task_drop_table(database_name, table_name, retry=3, retry_delay=10):
     """
-    table 삭제
+    task: table 삭제 (explicit query)
     """
     return AthenaOperator(
         task_id=f"drop_table_{database_name}_{table_name}",
@@ -56,15 +56,15 @@ def drop_table(database_name, table_name, retry=3, retry_delay=10):
         output_location=f"s3://{cfg.ATHENA_QUERY_OUTPUT_BUCKET}/{cfg.ATHENA_QUERY_OUTPUT_PREFIX}/",
         retries=retry,
         retry_delay=timedelta(seconds=retry_delay),
-        on_retry_callback=send_slack_message_fail,
-        on_failure_callback=send_slack_message_fail,
-        on_success_callback=send_slack_message_success,
+        on_retry_callback=sh.send_slack_message_fail,
+        on_failure_callback=sh.send_slack_message_fail,
+        on_success_callback=sh.send_slack_message_success,
     )
 
 
-def msck_repair_table(database_name, table_name, retry=5, retry_delay=5):
+def task_msck_repair_table(database_name, table_name, retry=5, retry_delay=5):
     """
-    table partition 갱신
+    task: table partition 갱신 (explicit query)
     """
     return AthenaOperator(
         task_id=f"msck_repair_{database_name}_{table_name}",
@@ -73,7 +73,7 @@ def msck_repair_table(database_name, table_name, retry=5, retry_delay=5):
         output_location=f"s3://{cfg.ATHENA_QUERY_OUTPUT_BUCKET}/{cfg.ATHENA_QUERY_OUTPUT_PREFIX}/",
         retries=retry,
         retry_delay=timedelta(seconds=retry_delay),
-        on_retry_callback=send_slack_message_fail,
-        on_failure_callback=send_slack_message_fail,
-        on_success_callback=send_slack_message_success,
+        on_retry_callback=sh.send_slack_message_fail,
+        on_failure_callback=sh.send_slack_message_fail,
+        on_success_callback=sh.send_slack_message_success,
     )

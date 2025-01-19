@@ -4,6 +4,10 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from airflow.models import Variable
 
+sts_client = boto3.client("sts")
+identity_info = sts_client.get_caller_identity()
+ACCOUNT_ID = identity_info["Account"]
+
 SEOUL_KEY = Variable.get("DATA_SEOUL_API_KEY")
 LIBRARY_KEY = Variable.get("DATA4LIBRARY_API_KEY")
 DISTRICTS_KOR_ENG = json.loads(Variable.get("DISTRICTS_KOR_ENG"))
@@ -20,21 +24,29 @@ RAW_DB = "cloudtree_raw_db"
 TRANS_DB = "cloudtree_transformed_db"
 AGG_DB = "cloudtree_aggregated_db"
 
-AGG_BUCKET_PREFIX = "cloudtree-aggregated-data"
+RAW_BUCKET = "cloudtree-raw-data"
+TRANS_BUCKET = "cloudtree-transformed-data"
+AGG_BUCKET = "cloudtree-aggregated-data"
+
+TRANS_PREFIX = [
+    "best-loan-list",
+    "cultural-event-info",
+    "library-data",
+    "bus-stop-loc",
+    "subway-station-loc",
+    "city-park-info",
+]
 
 AGG_TABLE = ["library_culture_analysis"]
 
 REDSHIFT_QUERY_BUCKET = "cloudtree-mwaa-query"
 REDSHIFT_QUERY_PREFIX = "redshift-query"
-
 REDSHIFT_CONN_ID = "cloudtree_redshift"
 REDSHIFT_DB = "cloudtree"
-
 REDSHIFT_COPY_ROLE_NAME = "bsh-redshift-k12"
 
-sts_client = boto3.client("sts")
-identity_info = sts_client.get_caller_identity()
-ACCOUNT_ID = identity_info["Account"]
+QUICKSIGHT_DATA_SET_NAMES = ["library_culture_analysis", "district_summary_extended"]
+
 
 """
 bll: 인기대출도서
