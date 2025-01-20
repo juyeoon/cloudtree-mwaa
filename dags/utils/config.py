@@ -38,7 +38,7 @@ TRANS_PREFIX = [
 ]
 
 AGG_RED_TABLES_DICT = {
-    # aggregated table:redshift table
+    # aggregated table:redshift table,
     "library_culture_analysis": "library_culture_analysis",
 }
 
@@ -50,7 +50,7 @@ REDSHIFT_CONN_ID = "cloudtree_redshift"
 REDSHIFT_DB = "cloudtree"
 REDSHIFT_COPY_ROLE_NAME = "bsh-redshift-k12"
 
-QUICKSIGHT_DATA_SET_NAMES = ["library_culture_analysis", "district_summary_extended"]
+QUICKSIGHT_DATA_SET_NAMES = ["library_culture_analysis"]
 
 
 """
