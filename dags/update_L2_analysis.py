@@ -5,6 +5,7 @@ from utils import config as cfg
 from utils import dag_notifications as dn
 from utils import athena_helpers as ath
 from utils import quicksight_helpers as qh
+from utils import redshift_helpers as rh
 
 with DAG(
     dag_id="update_L2_analysis",
@@ -17,7 +18,7 @@ with DAG(
     start_task = dn.task_alert_dag_state(dag.dag_id, "start")
 
     agg_database_name = cfg.AGG_DB
-    agg_tables = cfg.AGG_TABLE
+    agg_tables = list(cfg.AGG_RED_TABLES_DICT.keys())
 
     # L2
     with TaskGroup(group_id="agg_etl") as agg_etl:
@@ -29,7 +30,8 @@ with DAG(
 
     # redshift
     with TaskGroup(group_id="update_redshift") as update_redshift:
-        pass
+        update_basic_analysis_table = rh.task_load_agg_data_to_red(cfg.AGG_RED_TABLES_DICT)
+        update_advanced_analysis_table = rh.task_update_analysis_table(list(cfg.AGG_RED_TABLES_DICT.values()))
 
     # quicksight
     refresh_quicksight_spice = qh.task_refresh_spice()
