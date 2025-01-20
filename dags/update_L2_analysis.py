@@ -33,6 +33,8 @@ with DAG(
         update_basic_analysis_table = rh.task_load_agg_data_to_red(cfg.AGG_RED_TABLES_DICT)
         update_advanced_analysis_table = rh.task_update_analysis_table(list(cfg.AGG_RED_TABLES_DICT.values()))
 
+        update_basic_analysis_table >> update_advanced_analysis_table
+
     # quicksight
     refresh_quicksight_spice = qh.task_refresh_spice()
 
