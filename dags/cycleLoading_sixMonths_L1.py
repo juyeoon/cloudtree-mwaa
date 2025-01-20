@@ -25,58 +25,43 @@ with DAG(
     park_dict = cfg.PARK_DICT
 
     with TaskGroup(group_id="etl_lib") as etl_lib:
-        invoke_api_lambda = lh.task_invoke_lambda(
-            lib_dict["api_lambda_nm"], lib_dict["lambda_payload"]
-        )
-        msck_raw = ath.task_msck_repair_table(
-            lib_dict["raw_db_nm"], lib_dict["raw_table_nm"]
-        )
+        invoke_api_lambda = lh.task_invoke_lambda(lib_dict["api_lambda_nm"], lib_dict["lambda_payload"])
+        msck_raw = ath.task_msck_repair_table(lib_dict["raw_db_nm"], lib_dict["raw_table_nm"])
         run_trans_job = gh.task_run_glue_job(lib_dict["trans_job_nm"])
-        msck_trans = ath.task_msck_repair_table(
-            lib_dict["trans_db_nm"], lib_dict["trans_table_nm"]
-        )
+        msck_trans = ath.task_msck_repair_table(lib_dict["trans_db_nm"], lib_dict["trans_table_nm"])
         # TaskGroup 의존성 설정
         invoke_api_lambda >> msck_raw >> run_trans_job >> msck_trans
 
     with TaskGroup(group_id="etl_bus") as etl_bus:
-        invoke_api_lambda = lh.task_invoke_lambda(
-            bus_dict["api_lambda_nm"], bus_dict["lambda_payload"]
-        )
-        msck_raw = ath.task_msck_repair_table(
-            bus_dict["raw_db_nm"], bus_dict["raw_table_nm"]
-        )
+        invoke_api_lambda = lh.task_invoke_lambda(bus_dict["api_lambda_nm"], bus_dict["lambda_payload"])
+        msck_raw = ath.task_msck_repair_table(bus_dict["raw_db_nm"], bus_dict["raw_table_nm"])
         run_trans_job = gh.task_run_glue_job(bus_dict["trans_job_nm"])
-        msck_trans = ath.task_msck_repair_table(
-            bus_dict["trans_db_nm"], bus_dict["trans_table_nm"]
-        )
+        msck_trans = ath.task_msck_repair_table(bus_dict["trans_db_nm"], bus_dict["trans_table_nm"])
         # TaskGroup 의존성 설정
         invoke_api_lambda >> msck_raw >> run_trans_job >> msck_trans
 
     with TaskGroup(group_id="etl_sta") as etl_sta:
-        invoke_api_lambda = lh.task_invoke_lambda(
-            sta_dict["api_lambda_nm"], sta_dict["lambda_payload"]
-        )
-        msck_raw = ath.task_msck_repair_table(
-            sta_dict["raw_db_nm"], sta_dict["raw_table_nm"]
-        )
+        invoke_api_lambda = lh.task_invoke_lambda(sta_dict["api_lambda_nm"], sta_dict["lambda_payload"])
+        msck_raw = ath.task_msck_repair_table(sta_dict["raw_db_nm"], sta_dict["raw_table_nm"])
         run_trans_job = gh.task_run_glue_job(sta_dict["trans_job_nm"])
-        msck_trans = ath.task_msck_repair_table(
-            sta_dict["trans_db_nm"], sta_dict["trans_table_nm"]
-        )
+        msck_trans = ath.task_msck_repair_table(sta_dict["trans_db_nm"], sta_dict["trans_table_nm"])
         # TaskGroup 의존성 설정
         invoke_api_lambda >> msck_raw >> run_trans_job >> msck_trans
 
     with TaskGroup(group_id="etl_park") as etl_park:
-        msck_raw = ath.task_msck_repair_table(
-            park_dict["raw_db_nm"], park_dict["raw_table_nm"]
-        )
+        msck_raw = ath.task_msck_repair_table(park_dict["raw_db_nm"], park_dict["raw_table_nm"])
         run_trans_job = gh.task_run_glue_job(park_dict["trans_job_nm"])
-        msck_trans = ath.task_msck_repair_table(
-            park_dict["trans_db_nm"], park_dict["trans_table_nm"]
-        )
+        msck_trans = ath.task_msck_repair_table(park_dict["trans_db_nm"], park_dict["trans_table_nm"])
         # TaskGroup 의존성 설정
         msck_raw >> run_trans_job >> msck_trans
 
     end_task = dn.task_alert_dag_state(dag.dag_id, "end")
 
-    start_task >> [etl_lib, etl_bus, etl_sta, etl_park] >> end_task
+    trigger_next_ETL = TriggerDagRunOperator(
+        task_id=f'trigger_next_ETL_from_{dag.dag_id}',
+        trigger_dag_id='update_L2_analysis',
+        wait_for_completion=False,
+        reset_dag_run=True,
+    )
+
+    start_task >> [etl_lib, etl_bus, etl_sta, etl_park] >> end_task >> trigger_next_ETL
