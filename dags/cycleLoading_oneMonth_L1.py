@@ -12,7 +12,7 @@ with DAG(
     dag_id="cycleLoading_oneMonth_L1",
     description="1개월 주기 적재: 인기대출도서 목록(bll), 서울시 문화행사 목록(cul), L1까지 ETL",
     start_date=days_ago(1),
-    # schedule_interval='10 15 1 * *', # 매달 1일 오전 12시 10분
+    # schedule_interval='10 15 L * *', # 매달 1일 오전 12시 10분
     schedule_interval=None,
     catchup=False,
 ) as dag:
