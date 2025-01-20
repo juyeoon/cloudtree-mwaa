@@ -84,7 +84,7 @@ CUL_DICT = {
     "raw_info_table_nm": "cultural_event_info_raw",
     "trans_table_nm": "cultural_event_info",
     "keyword_job_nm": "cultural_event_keyword_job",
-    "trans_job_nm": "best_loan_list_job",
+    "trans_job_nm": "cultural_event_info_job",
     "api_lambda_nm": "getCulEventAPI",
     "lambda_payload": {
         "districts": list(DISTRICTS_KOR_ENG.keys()),
