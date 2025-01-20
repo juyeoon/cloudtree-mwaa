@@ -6,6 +6,7 @@ from utils import dag_notifications as dn
 from utils import athena_helpers as ath
 from utils import quicksight_helpers as qh
 from utils import redshift_helpers as rh
+from utils import s3_helpers as s3h
 
 with DAG(
     dag_id="update_L2_analysis",
@@ -24,6 +25,7 @@ with DAG(
     with TaskGroup(group_id="agg_etl") as agg_etl:
         for table_name in agg_tables:
             with TaskGroup(group_id=f"agg_etl_{table_name}") as agg_etl:
+                delete_old_data = s3h.task_delete_agg_data(list(cfg.AGG_RED_TABLES_DICT.keys()))
                 drop_table = ath.task_drop_table(agg_database_name, table_name)
                 create_table = ath.task_create_table(agg_database_name, table_name)
                 drop_table >> create_table
@@ -31,7 +33,7 @@ with DAG(
     # redshift
     with TaskGroup(group_id="update_redshift") as update_redshift:
         update_basic_analysis_table = rh.task_load_agg_data_to_red(cfg.AGG_RED_TABLES_DICT)
-        update_advanced_analysis_table = rh.task_update_analysis_table(list(cfg.AGG_RED_TABLES_DICT.values()))
+        update_advanced_analysis_table = rh.task_update_analysis_table(cfg.ADVANCED_ANALYSIS_TABLES)
 
         update_basic_analysis_table >> update_advanced_analysis_table
 
