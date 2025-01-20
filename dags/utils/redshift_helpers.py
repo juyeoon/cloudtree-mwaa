@@ -43,7 +43,7 @@ def update_cloudtree_agg_table(agg_red_tables):
     기본 분석 테이블 갱신. aggreated 버킷에 있는 데이터에 대해서 redshift 테이블 데이터를 갱신하는 함수 (create + copy)
     """
     redshift_hook = RedshiftSQLHook(redshift_conn_id=cfg.REDSHIFT_CONN_ID)
-    for agg_table_name, red_table_name in agg_red_tables.item():
+    for agg_table_name, red_table_name in agg_red_tables.items():
         # drop
         drop_table_query = f"DROP TABLE IF EXISTS {red_table_name};"
         logging.info(drop_table_query)
@@ -72,7 +72,7 @@ def task_load_agg_data_to_red(agg_red_tables, retry=5, retry_delay=10):
     task: 기본 분석 테이블 데이터 갱신
     """
     return PythonOperator(
-        task_id=f"load_agg_data_to_red({agg_red_tables})",
+        task_id=f"load_agg_data_to_red",
         python_callable=update_cloudtree_agg_table,
         op_kwargs={"agg_red_tables": agg_red_tables},
         retries=retry,
@@ -88,8 +88,8 @@ def task_update_analysis_table(red_tables, retry=5, retry_delay=10):
     task: 심화 분석 테이블 데이터 갱신
     """
     return PythonOperator(
-        task_id=f"update_analysis_table({red_tables})",
-        python_callable=update_cloudtree_agg_table,
+        task_id=f"update_analysis_table",
+        python_callable=update_advanced_analysis_table,
         op_kwargs={"red_tables": red_tables},
         retries=retry,
         retry_delay=timedelta(seconds=retry_delay),
