@@ -32,26 +32,3 @@ def create_sql_files(prefix, filenames, directory="athena-query"):
             pass
 
         print(f"Created: {file_path}")
-
-
-# Example usage
-file_list1 = [
-    "best_loan_list_raw",
-    "bus_stop_loc_raw",
-    "cultural_event_info_raw",
-    "cultural_event_parse_raw",
-    "library_data_raw",
-    "subway_station_loc_raw",
-    "city_park_info_raw",
-]
-create_sql_files("create_table_", file_list1)
-
-file_list2 = [
-    "library_data",
-    "city_park_info",
-    "bus_stop_loc",
-    "cultural_event_info",
-    "subway_station_loc",
-    "best_loan_list",
-]
-create_sql_files("create_table_", file_list2)
