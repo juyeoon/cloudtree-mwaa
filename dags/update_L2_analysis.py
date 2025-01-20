@@ -28,7 +28,7 @@ with DAG(
                 delete_old_data = s3h.task_delete_agg_data(list(cfg.AGG_RED_TABLES_DICT.keys()))
                 drop_table = ath.task_drop_table(agg_database_name, table_name)
                 create_table = ath.task_create_table(agg_database_name, table_name)
-                drop_table >> create_table
+                delete_old_data >> drop_table >> create_table
 
     # redshift
     with TaskGroup(group_id="update_redshift") as update_redshift:
