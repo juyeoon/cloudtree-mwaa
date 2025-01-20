@@ -22,7 +22,7 @@ def task_delete_glue_job_bookmark(job_name, retry=5, retry_delay=5):
     return PythonOperator(
         task_id=f"reset_{job_name}_glue_bookmark",
         python_callable=delete_glue_job_bookmark,
-        op_kwargs={"job_name": "your-glue-job-name"},
+        op_kwargs={"job_name": job_name},
     )
 
 
