@@ -37,7 +37,12 @@ TRANS_PREFIX = [
     "city-park-info",
 ]
 
-AGG_TABLE = ["library_culture_analysis"]
+AGG_RED_TABLES_DICT = {
+    # aggregated table:redshift table
+    "library_culture_analysis": "library_culture_analysis",
+}
+
+ADVANCED_ANALYSIS_TABLES = ["analysis_results"]
 
 REDSHIFT_QUERY_BUCKET = "cloudtree-mwaa-query"
 REDSHIFT_QUERY_PREFIX = "redshift-query"
