@@ -24,8 +24,8 @@ with DAG(
     with TaskGroup(group_id="agg_etl") as agg_etl:
         for table_name in agg_tables:
             with TaskGroup(group_id=f"agg_etl_{table_name}") as agg_etl:
-                drop_table = ath.drop_table(agg_database_name, table_name)
-                create_table = ath.create_table(agg_database_name, table_name)
+                drop_table = ath.task_drop_table(agg_database_name, table_name)
+                create_table = ath.task_create_table(agg_database_name, table_name)
                 drop_table >> create_table
 
     # redshift
