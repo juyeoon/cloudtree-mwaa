@@ -25,9 +25,7 @@ def get_dataset_ids_by_names(datasets_names):
 
         next_token = response.get("NextToken")
         if next_token:
-            response = client.list_data_sets(
-                AwsAccountId=cfg.ACCOUNT_ID, NextToken=next_token
-            )
+            response = client.list_data_sets(AwsAccountId=cfg.ACCOUNT_ID, NextToken=next_token)
         else:
             response = None
     return dataset_ids
@@ -47,16 +45,12 @@ def refresh_spice(dataset_names):
                 AwsAccountId=cfg.ACCOUNT_ID,
                 IngestionId=ingestion_id,
             )
-            logging.info(
-                f"Successfully refreshed Data Set: {dataset_nm} (ID: {dataset_id})"
-            )
+            logging.info(f"Successfully refreshed Data Set: {dataset_nm} (ID: {dataset_id})")
         except Exception as e:
-            logging.error(
-                f"Failed to refresh Data Set: {dataset_nm} (ID: {dataset_id}), Error: {str(e)}"
-            )
+            logging.error(f"Failed to refresh Data Set: {dataset_nm} (ID: {dataset_id}), Error: {str(e)}")
 
 
-def task_refresh_spice(retry=3, retry_delay=5):
+def task_refresh_spice(data_sets, retry=3, retry_delay=5):
     """
     task: Quicksight Spice를 refresh
     """
@@ -64,7 +58,7 @@ def task_refresh_spice(retry=3, retry_delay=5):
         task_id="refresh_spice",
         python_callable=refresh_spice,
         op_kwargs={
-            "dataset_names": cfg.QUICKSIGHT_DATA_SET_NAMES,
+            "dataset_names": data_sets,
         },
         retries=retry,
         retry_delay=timedelta(seconds=retry_delay),

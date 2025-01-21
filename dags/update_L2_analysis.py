@@ -38,7 +38,7 @@ with DAG(
         update_basic_analysis_table >> update_advanced_analysis_table
 
     # quicksight
-    refresh_quicksight_spice = qh.task_refresh_spice()
+    refresh_quicksight_spice = qh.task_refresh_spice(cfg.QUICKSIGHT_DATA_SET_NAMES)
 
     end_task = dn.task_alert_dag_state(dag.dag_id, "end")
 
