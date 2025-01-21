@@ -3,3 +3,8 @@ best-loan-raw-add-createtime/
 test-dag.py
 athena-redshift-query/
 leagcy-dags/
+레드쿼리.sql
+_dag5.py
+_dag6.py
+create_tables.py
+deleteblldata.py

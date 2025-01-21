@@ -10,7 +10,7 @@ from utils import s3_helpers as s3h
 
 with DAG(
     dag_id="initialLoading_allData_L1",
-    description="모든 배치 데이터(bll, cul, lib, bus, sta, park) 초기 적재, L1까지 ETL",
+    description="모든 배치 데이터(bll, cul, lib, bus, sta, park) 재적재, L1까지 ETL",
     start_date=days_ago(1),
     schedule_interval=None,
     catchup=False,
@@ -25,7 +25,7 @@ with DAG(
     sta_dict = cfg.STA_DICT
     park_dict = cfg.PARK_DICT
 
-    delete_trans_data = s3h.task_delete_transformed_data(cfg.TRANS_PREFIX)
+    delete_trans_data = s3h.task_delete_transformed_data(list(cfg.TRANS_PREFIX.values()))
 
     with TaskGroup(group_id="etl_bll") as etl_bll:
         msck_raw = ath.task_msck_repair_table(bll_dict["raw_db_nm"], bll_dict["raw_table_nm"])

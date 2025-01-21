@@ -28,14 +28,14 @@ RAW_BUCKET = "cloudtree-raw-data"
 TRANS_BUCKET = "cloudtree-transformed-data"
 AGG_BUCKET = "cloudtree-aggregated-data"
 
-TRANS_PREFIX = [
-    "best-loan-list",
-    "cultural-event-info",
-    "library-data",
-    "bus-stop-loc",
-    "subway-station-loc",
-    "city-park-info",
-]
+TRANS_PREFIX = {
+    "bll": "best-loan-list",
+    "cul": "cultural-event-info",
+    "lib": "library-data",
+    "bus": "bus-stop-loc",
+    "sta": "subway-station-loc",
+    "park": "city-park-info",
+}
 
 AGG_RED_TABLES_DICT = {
     # aggregated table:redshift table,
