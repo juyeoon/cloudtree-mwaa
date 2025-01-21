@@ -83,3 +83,42 @@ def task_copy_bll_raw_data(district_eng, district_kor, year, month):
         task_id=f"copy_data_{district_eng}_{year}_{month}",
         bash_command=f"aws s3 cp s3://{bll_source_bucket}/{bll_source_bucket_prefix}/district={district_kor}/year={year}/month={month}/ s3://{bll_destination_bucket}/{bll_destination_bucket_prefix}/district={district_kor}/year={year}/month={month}/ --recursive",
     )
+
+
+def for_demo_copy_data_to_s3(districts, year, month):
+    """
+    S3 버킷 간 데이터를 복사하는 함수 (boto3 사용)
+    """
+    s3 = boto3.client('s3')
+
+    bll_source_bucket = "cloudtree-best-loan-raw"
+    bll_source_bucket_prefix = "best-loan-list"
+    bll_destination_bucket = "cloudtree-raw-data"
+    bll_destination_bucket_prefix = "best-loan-list"
+
+    for district_kor in districts:
+        source_prefix = f"{bll_source_bucket_prefix}/district={district_kor}/year={year}/month={month}/"
+
+        # 객체 목록 가져오기
+        response = s3.list_objects_v2(Bucket=bll_source_bucket, Prefix=source_prefix)
+        if 'Contents' in response:
+            for obj in response['Contents']:
+                source_key = obj['Key']
+                destination_key = source_key.replace(bll_source_bucket_prefix, bll_destination_bucket_prefix)
+
+                # 객체 복사
+                copy_source = {'Bucket': bll_source_bucket, 'Key': source_key}
+                s3.copy_object(CopySource=copy_source, Bucket=bll_destination_bucket, Key=destination_key)
+
+
+def for_demo_task(districts, year, month):
+    """
+    test용 task: 인기대출도서 데이터를 원본 데이터 버킷에서 raw 버킷으로 복사
+    """
+    return PythonOperator(
+        task_id=f"invoke_lambda_getBestLoanAPI",
+        python_callable=for_demo_copy_data_to_s3,
+        op_args=[districts, year, month],
+        on_failure_callback=sh.send_slack_message_fail,
+        on_success_callback=sh.send_slack_message_success,
+    )
