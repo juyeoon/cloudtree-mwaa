@@ -1,0 +1,1 @@
++ glue job에서 transforming할 때 필요한 데이터
