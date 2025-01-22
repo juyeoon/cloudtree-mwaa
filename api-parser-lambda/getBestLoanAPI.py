@@ -59,9 +59,6 @@ def lambda_handler(event, context):
     while current_start_date <= period_end:
         endDt = current_start_date + relativedelta(months=1) - timedelta(days=1)
 
-        print(current_start_date)
-        print(endDt)
-
         for dtl_gu in dtl_gu_list:
             dtl_region = districts_dict[dtl_gu]
 
@@ -78,7 +75,7 @@ def lambda_handler(event, context):
 
             print("====================\napi 호출 시작")
 
-            time.sleep(2)
+            time.sleep(5)
             response = requests.get(base_api_url, params=params)
             if response.status_code == 200:
                 print("api 호출 성공: 200")
@@ -92,14 +89,15 @@ def lambda_handler(event, context):
 
             df = transform_dataframe(df, dtl_gu, year, month)
 
-            file_name = f'bestLoanList_{dtl_gu}_{year}{month:02}_{pageSize}'  #  =========== custom value ===========
-            file_path = f'{main_prefix}/district={dtl_gu}/year={year}/month={month}/{file_name}'  #  =========== custom value ===========
+            file_name = f'bestLoanList_{dtl_gu}_{year}{month:02}_{pageSize}'
+            file_path = f'{main_prefix}/district={dtl_gu}/year={year}/month={month}/{file_name}'
 
             save_to_csv(df, bucket_name, f'{file_path}.csv')
 
         current_start_date += relativedelta(months=1)
 
     print("------------전체 api 파싱 끝------------")
+    return {"status": "success"}
 
 
 def parse_xml_data(xml_data):

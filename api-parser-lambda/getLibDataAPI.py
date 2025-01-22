@@ -16,7 +16,6 @@ def lambda_handler(event, context):
     authKey = event.get('key')
 
     # api 파라미터
-    # dtl_gu_list: 자치구
     region = 11
     pageSize = 2000
     dtl_gu_list = event.get('districts')
@@ -76,8 +75,8 @@ def lambda_handler(event, context):
 
         df = transform_dataframe(df, dtl_gu)
 
-        file_name = f"libData_{dtl_gu}_{request_date}"  #  =========== custom value ===========
-        file_path = f"{main_prefix}/request_date={request_date}/district={dtl_gu}/{file_name}"  #  =========== custom value ===========
+        file_name = f"libData_{dtl_gu}_{request_date}"
+        file_path = f"{main_prefix}/request_date={request_date}/district={dtl_gu}/{file_name}"
 
         save_to_csv(df, bucket_name, f"{file_path}.csv")
 

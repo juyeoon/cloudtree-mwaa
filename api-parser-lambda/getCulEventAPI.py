@@ -17,7 +17,6 @@ def lambda_handler(event, context):
     service = 'culturalEventInfo'
 
     # api 파라미터
-    # districts: 자치구
     type = 'xml'
     start_index = 1
     page_size = 1000  # max 개수 1000개
@@ -61,8 +60,8 @@ def lambda_handler(event, context):
 
     for district in districts:
         gu_df = df[df["GUNAME"].str.contains(district)]
-        file_name = f'{service}_{district}_{request_date}'  #  =========== custom value ===========
-        file_path = f'{main_prefix}/request_date={request_date}/district={district}/{file_name}'  #  =========== custom value ===========
+        file_name = f'{service}_{district}_{request_date}'
+        file_path = f'{main_prefix}/request_date={request_date}/district={district}/{file_name}'
         save_to_csv(gu_df, bucket_name, f'{file_path}.csv')
 
 

@@ -55,8 +55,8 @@ def lambda_handler(event, context):
 
     print("------------API 파싱 종료------------")
 
-    file_name = f'{service}_all_{request_date}'  #  =========== custom value ===========
-    file_path = f'{main_prefix}/request_date={request_date}/{file_name}'  #  =========== custom value ===========
+    file_name = f'{service}_all_{request_date}'
+    file_path = f'{main_prefix}/request_date={request_date}/{file_name}'
     save_to_csv(df, bucket_name, f'{file_path}.csv')
 
 
