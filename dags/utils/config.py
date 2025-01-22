@@ -42,7 +42,7 @@ AGG_RED_TABLES_DICT = {
     "library_culture_analysis": "library_culture_analysis",
 }
 
-ADVANCED_ANALYSIS_TABLES = ["analysis_results"]
+ADVANCED_ANALYSIS_TABLES = ["integrated_accessibility", "facility_locations"]
 
 REDSHIFT_QUERY_BUCKET = "cloudtree-mwaa-query"
 REDSHIFT_QUERY_PREFIX = "redshift-query"
@@ -50,7 +50,7 @@ REDSHIFT_CONN_ID = "cloudtree_redshift"
 REDSHIFT_DB = "cloudtree"
 REDSHIFT_COPY_ROLE_NAME = "bsh-redshift-k12"
 
-QUICKSIGHT_DATA_SET_NAMES = ["library_culture_analysis"]
+QUICKSIGHT_DATA_SET_NAMES = ["library_culture_analysis", "integrated_accessibility", "facility_locations"]
 
 
 """

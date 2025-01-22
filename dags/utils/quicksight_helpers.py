@@ -18,9 +18,11 @@ def get_dataset_ids_by_names(datasets_names):
         for dataset in response.get("DataSetSummaries", []):
             dataset_name = dataset["Name"]
             dataset_id = dataset["DataSetId"]
+            import_mode = dataset["ImportMode"]  # SPICE 또는 DIRECT_QUERY
 
+            # SPICE 데이터 세트만 선택
             # 대상 이름 리스트에 포함된 데이터 세트만 저장
-            if dataset_name in datasets_names:
+            if import_mode == 'SPICE' and dataset_name in datasets_names:
                 dataset_ids[dataset_name] = dataset_id
 
         next_token = response.get("NextToken")
