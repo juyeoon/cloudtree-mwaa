@@ -13,7 +13,7 @@ with DAG(
     dag_id="_cycleLoading_oneMonth_L1_bll",
     description="1개월 주기 적재: 인기대출도서 목록(bll), L1까지 ETL",
     start_date=days_ago(1),
-    schedule_interval=None,
+    schedule_interval='10 0 * * *',
     catchup=False,
 ) as dag:
 
